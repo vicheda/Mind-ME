@@ -115,7 +115,7 @@ The built files will be in the `dist/` folder.
 
 ## Component Structure
 
-\`\`\`
+```
 src/
 ├── components/          # Reusable UI components
 │   ├── Button.jsx
@@ -133,7 +133,7 @@ src/
 ├── storage.js          # localStorage utilities
 ├── App.jsx             # Main application
 └── main.jsx           # Entry point
-\`\`\`
+```
 
 ## Technologies
 
@@ -143,18 +143,5 @@ src/
 - **CSS Variables** - Theming
 - **localStorage** - Data persistence
 
-## Browser Support
-
-Modern browsers with ES6+ support:
-- Chrome 90+
-- Firefox 88+
-- Safari 14+
-- Edge 90+
-
-## License
-
-MIT
-
----
 
 Built with ❤️ for students and professionals managing complex schedules.
