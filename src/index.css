@@ -1,0 +1,72 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+:root {
+  --bg-primary: #0f0e0c;
+  --bg-surface: #1a1915;
+  --border-color: #2e2c26;
+  --accent-yellow: #e8c547;
+  --accent-orange: #e07b3a;
+  --accent-green: #6eb89e;
+  --text-primary: #f0ede4;
+  --text-muted: #7a7567;
+  
+  /* Project colors */
+  --color-0: #e8c547;
+  --color-1: #e07b3a;
+  --color-2: #6eb89e;
+  --color-3: #7b8ce8;
+  --color-4: #e06b9a;
+  --color-5: #8be87b;
+  --color-6: #e8a87b;
+}
+
+body {
+  font-family: 'DM Sans', sans-serif;
+  background-color: var(--bg-primary);
+  color: var(--text-primary);
+  overflow-x: hidden;
+}
+
+h1, h2, h3, h4, h5, h6 {
+  font-family: 'Instrument Serif', serif;
+  font-weight: 400;
+}
+
+code, .mono {
+  font-family: 'DM Mono', monospace;
+}
+
+button {
+  font-family: 'DM Sans', sans-serif;
+  cursor: pointer;
+  border: none;
+  background: none;
+  color: inherit;
+}
+
+input, textarea, select {
+  font-family: 'DM Sans', sans-serif;
+  color: var(--text-primary);
+}
+
+::-webkit-scrollbar {
+  width: 8px;
+  height: 8px;
+}
+
+::-webkit-scrollbar-track {
+  background: var(--bg-primary);
+}
+
+::-webkit-scrollbar-thumb {
+  background: var(--border-color);
+  border-radius: 4px;
+}
+
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-muted);
+}

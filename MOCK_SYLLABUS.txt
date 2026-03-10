@@ -1,0 +1,54 @@
+CS396 Software Design - Spring 2026 Course Syllabus
+
+===== ASSIGNMENTS =====
+
+Assignment 1: UML Diagrams due March 15, 2026 (~4 hours)
+Worth 10% of final grade
+
+Assignment 2 - Design Patterns Implementation due March 22 (~8 hours)
+This assignment covers Factory, Observer, and Strategy patterns
+
+Assignment 3: Refactoring Project due April 5, 2026 (~6 hours)
+Submit via GitHub Classroom by 11:59 PM
+
+Final Project Proposal due March 28 (~3 hours)
+
+===== EXAMS =====
+
+Midterm Exam on April 10, 2026
+Covers weeks 1-6 material
+
+Final Exam scheduled for May 1 (~2 hours)
+Comprehensive assessment
+
+===== QUIZZES =====
+
+Quiz 1 - March 18 on SOLID principles
+Quiz 2 due March 25, 2026
+Quiz 3: Design Patterns on April 8
+
+===== READINGS & DISCUSSIONS =====
+
+Reading Response 1 due 15 March (~1 hour)
+Discussion Forum Post due March 20, 2026 (~2 hours)
+Reading Response 2 - April 1 (~1.5 hours)
+
+===== PROJECT MILESTONES =====
+
+Project Phase 1: Requirements due April 12 (~5 hours)
+Project Phase 2: Design Documentation submit April 19, 2026 (~7 hours)
+Project Phase 3: Implementation due April 26 (~10 hours)
+Project Final Presentation on May 3, 2026 (~4 hours)
+
+===== LABS =====
+
+Lab Exercise 1 due 3/17/2026 (~2 hours)
+Lab Exercise 2 - March 24 (~2 hours)
+Lab Exercise 3 due 03/31/2026 (~2 hours)
+Lab Exercise 4 submit on 4/7/2026 (~2 hours)
+
+===== PORTFOLIO =====
+
+Portfolio Entry 1 due March 30 (~3 hours)
+Portfolio Entry 2 due April 15, 2026 (~3 hours)
+Final Portfolio Submission on April 30 (~5 hours)

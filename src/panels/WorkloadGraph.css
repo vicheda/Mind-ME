@@ -1,0 +1,243 @@
+.workload-graph {
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 12px;
+  padding: 1.5rem;
+  margin: 1rem;
+}
+
+.graph-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 1.5rem;
+  flex-wrap: wrap;
+  gap: 1rem;
+}
+
+.graph-header h2 {
+  font-size: 1.5rem;
+}
+
+.graph-legend {
+  display: flex;
+  gap: 1.5rem;
+  flex-wrap: wrap;
+}
+
+.legend-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.875rem;
+  color: var(--text-muted);
+}
+
+.legend-color {
+  width: 0.875rem;
+  height: 0.875rem;
+  border-radius: 2px;
+}
+
+.graph-container {
+  display: flex;
+  gap: 1rem;
+  height: 300px;
+  position: relative;
+}
+
+.graph-y-axis {
+  display: flex;
+  flex-direction: column;
+  justify-content: space-between;
+  padding: 1rem 0;
+  min-width: 2rem;
+}
+
+.y-label {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+  text-align: right;
+  font-family: 'DM Mono', monospace;
+}
+
+.graph-content {
+  flex: 1;
+  position: relative;
+  border: 1px solid var(--border-color);
+  border-radius: 6px;
+  padding: 1rem;
+  background: var(--bg-primary);
+}
+
+.graph-threshold-line {
+  position: absolute;
+  left: 0;
+  right: 0;
+  height: 2px;
+  background: #e06b6b;
+  border-top: 2px dashed #e06b6b;
+  opacity: 0.5;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.threshold-label {
+  position: absolute;
+  right: 0.5rem;
+  top: -1.25rem;
+  font-size: 0.7rem;
+  color: #e06b6b;
+  background: var(--bg-primary);
+  padding: 0 0.25rem;
+}
+
+.graph-bars {
+  display: flex;
+  align-items: flex-end;
+  height: 100%;
+  gap: 2px;
+  position: relative;
+  z-index: 2;
+}
+
+.bar-container {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  height: 100%;
+  position: relative;
+  cursor: pointer;
+}
+
+.bar-container.today::after {
+  content: '';
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  height: 100%;
+  border: 2px solid var(--accent-yellow);
+  border-radius: 4px;
+  pointer-events: none;
+}
+
+.bar {
+  width: 100%;
+  min-height: 2px;
+  border-radius: 4px 4px 0 0;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+  overflow: hidden;
+}
+
+.bar:hover {
+  transform: translateY(-2px);
+  filter: brightness(1.2);
+}
+
+.bar.overloaded {
+  box-shadow: 0 0 0 2px #e06b6b;
+}
+
+.bar-segment {
+  width: 100%;
+  opacity: 0.9;
+  transition: opacity 0.2s ease;
+}
+
+.bar:hover .bar-segment {
+  opacity: 1;
+}
+
+.bar-empty {
+  width: 100%;
+  height: 2px;
+  background: var(--border-color);
+  border-radius: 1px;
+}
+
+.bar-date {
+  margin-top: 0.5rem;
+  font-size: 0.7rem;
+  color: var(--text-muted);
+  white-space: nowrap;
+  transform: rotate(-45deg);
+  transform-origin: center;
+  position: absolute;
+  bottom: -2rem;
+}
+
+.bar-tooltip {
+  position: absolute;
+  bottom: calc(100% + 0.5rem);
+  left: 50%;
+  transform: translateX(-50%);
+  background: var(--bg-surface);
+  border: 1px solid var(--border-color);
+  border-radius: 8px;
+  padding: 0.75rem;
+  min-width: 200px;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.4);
+  z-index: 100;
+  pointer-events: none;
+}
+
+.bar-tooltip::after {
+  content: '';
+  position: absolute;
+  top: 100%;
+  left: 50%;
+  transform: translateX(-50%);
+  border: 6px solid transparent;
+  border-top-color: var(--border-color);
+}
+
+.tooltip-date {
+  font-weight: 600;
+  margin-bottom: 0.5rem;
+  color: var(--text-primary);
+}
+
+.tooltip-total {
+  font-size: 0.875rem;
+  color: var(--text-muted);
+  margin-bottom: 0.5rem;
+}
+
+.tooltip-divider {
+  height: 1px;
+  background: var(--border-color);
+  margin: 0.5rem 0;
+}
+
+.tooltip-project {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  margin-bottom: 0.375rem;
+  font-size: 0.75rem;
+}
+
+.tooltip-project:last-child {
+  margin-bottom: 0;
+}
+
+.tooltip-color {
+  width: 0.75rem;
+  height: 0.75rem;
+  border-radius: 2px;
+  flex-shrink: 0;
+}
+
+.tooltip-name {
+  flex: 1;
+  color: var(--text-primary);
+}
+
+.tooltip-hours {
+  color: var(--text-muted);
+  white-space: nowrap;
+}
