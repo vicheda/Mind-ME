@@ -16,7 +16,7 @@ export const PRIORITY_LEVELS = {
   HIGH: 'high',
 };
 
-export const MAX_HOURS_PER_DAY = 8;
+export const MAX_HOURS_PER_DAY = 4;
 export const MAX_SESSION_HOURS = 2;
 export const STORAGE_KEY = 'syllabus-planner-v2';
 

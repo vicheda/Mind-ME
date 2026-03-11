@@ -89,10 +89,6 @@ const WorkloadGraph = ({ tasks, projects }) => {
         </div>
         
         <div className="graph-content">
-          <div className="graph-threshold-line" style={{ bottom: `${(MAX_HOURS_PER_DAY / maxHours) * 100}%` }}>
-            <span className="threshold-label mono">{MAX_HOURS_PER_DAY}h limit</span>
-          </div>
-          
           <div className="graph-bars">
             {days.map((day, index) => {
               const heightPercent = (day.data.total / maxHours) * 100;
