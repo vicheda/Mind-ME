@@ -106,6 +106,10 @@ const WorkloadGraph = ({ tasks, projects }) => {
                   onMouseEnter={() => setHoveredBar(index)}
                   onMouseLeave={() => setHoveredBar(null)}
                 >
+                  {day.data.total > 0 && (
+                    <div className="bar-value mono">{day.data.total.toFixed(1)}h</div>
+                  )}
+
                   {day.data.total > 0 ? (
                     <div 
                       className={`bar ${isOverloaded ? 'overloaded' : ''}`}

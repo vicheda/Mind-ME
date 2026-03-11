@@ -205,14 +205,11 @@ export const calculateDailyWorkload = (tasks, projects, startDate, endDate) => {
   const dailyData = {};
   
   tasks.forEach(task => {
-    if (!visibleProjects.has(task.projectId) || task.completed) {
+    if (!visibleProjects.has(task.projectId)) {
       return;
     }
     
     task.sessions?.forEach(session => {
-      if (session.completed) {
-        return;
-      }
       const sessionDate = new Date(session.date);
       if (isBefore(sessionDate, startDate) || isAfter(sessionDate, endDate)) {
         return;

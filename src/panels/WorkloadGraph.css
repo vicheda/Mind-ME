@@ -144,6 +144,13 @@
   cursor: pointer;
 }
 
+.bar-value {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  margin-bottom: 0.25rem;
+  white-space: nowrap;
+}
+
 .bar-container.today::after {
   content: '';
   position: absolute;
