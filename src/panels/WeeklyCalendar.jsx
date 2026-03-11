@@ -62,8 +62,9 @@ const WeeklyCalendar = ({ tasks, projects, selectedDate, onSelectDate, onHighlig
         </div>
       </div>
       
-      <div className="calendar-grid">
-        {weekDays.map((day, index) => {
+      <div className="calendar-grid-scroll">
+        <div className="calendar-grid">
+          {weekDays.map((day, index) => {
           const dayName = format(day, 'EEE');
           const dayNumber = format(day, 'd');
           const sessions = getDaySessions(day);
@@ -124,6 +125,7 @@ const WeeklyCalendar = ({ tasks, projects, selectedDate, onSelectDate, onHighlig
             </div>
           );
         })}
+        </div>
       </div>
       
       <div className="calendar-legend">
