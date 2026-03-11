@@ -76,6 +76,7 @@ export const scheduleTask = (task, existingSessions = []) => {
         totalSessions: numSessions,
         hours: hoursPerSession,
         date: sessionDate.toISOString(),
+        completed: false,
       });
     }
   } else if (numSessions === 1) {
@@ -93,6 +94,7 @@ export const scheduleTask = (task, existingSessions = []) => {
         totalSessions: 1,
         hours: hoursPerSession,
         date: sessionDate.toISOString(),
+        completed: false,
       });
     }
   } else {
@@ -118,6 +120,7 @@ export const scheduleTask = (task, existingSessions = []) => {
         totalSessions: numSessions,
         hours: hoursPerSession,
         date: sessionDate.toISOString(),
+        completed: false,
       });
     }
   }
@@ -168,6 +171,9 @@ export const getSessionsByDate = (tasks, projects) => {
     }
     
     task.sessions?.forEach(session => {
+      if (session.completed) {
+        return;
+      }
       const dateKey = format(new Date(session.date), 'yyyy-MM-dd');
       if (!sessionsByDate[dateKey]) {
         sessionsByDate[dateKey] = [];
@@ -204,6 +210,9 @@ export const calculateDailyWorkload = (tasks, projects, startDate, endDate) => {
     }
     
     task.sessions?.forEach(session => {
+      if (session.completed) {
+        return;
+      }
       const sessionDate = new Date(session.date);
       if (isBefore(sessionDate, startDate) || isAfter(sessionDate, endDate)) {
         return;

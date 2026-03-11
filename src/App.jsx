@@ -86,7 +86,7 @@ function App() {
       const visibleProjects = new Set(projects.filter(p => p.visible).map(p => p.id));
       const existingSessions = currentTasks
         .filter(t => visibleProjects.has(t.projectId) && !t.completed)
-        .flatMap(t => t.sessions || []);
+        .flatMap(t => (t.sessions || []).filter(s => !s.completed));
       
       // Schedule the task
       const { sessions, warnings, isUrgent } = scheduleTask(newTask, existingSessions);
@@ -103,7 +103,7 @@ function App() {
       const newTasks = [];
       let allExistingSessions = currentTasks
         .filter(t => visibleProjects.has(t.projectId) && !t.completed)
-        .flatMap(t => t.sessions || []);
+        .flatMap(t => (t.sessions || []).filter(s => !s.completed));
       
       tasksData.forEach(taskData => {
         const newTask = createTask(taskData);
@@ -119,10 +119,44 @@ function App() {
     });
   };
   
-  const handleToggleComplete = (taskId) => {
+  const handleToggleTaskComplete = (taskId) => {
     setTasks(tasks.map(t => 
-      t.id === taskId ? { ...t, completed: !t.completed } : t
+      t.id === taskId
+        ? {
+            ...t,
+            completed: !t.completed,
+            sessions: (t.sessions || []).map(session => ({
+              ...session,
+              completed: !t.completed,
+            })),
+          }
+        : t
     ));
+  };
+
+  const handleToggleSessionComplete = (taskId, sessionId) => {
+    setTasks(currentTasks =>
+      currentTasks.map(task => {
+        if (task.id !== taskId) {
+          return task;
+        }
+
+        const sessions = (task.sessions || []).map(session =>
+          session.id === sessionId
+            ? { ...session, completed: !session.completed }
+            : session
+        );
+
+        const allSessionsComplete =
+          sessions.length > 0 && sessions.every(session => session.completed);
+
+        return {
+          ...task,
+          sessions,
+          completed: allSessionsComplete,
+        };
+      })
+    );
   };
   
   const handleDeleteTask = (taskId) => {
@@ -155,10 +189,20 @@ function App() {
       // Get existing sessions from other visible tasks
       const otherSessions = tasks
         .filter(t => t.id !== task.id && visibleProjects.has(t.projectId) && !t.completed)
-        .flatMap(t => t.sessions || []);
+        .flatMap(t => (t.sessions || []).filter(s => !s.completed));
       
       const { sessions } = scheduleTask(task, otherSessions);
-      return { ...task, sessions };
+
+      // Preserve completion by session order when sessions are recalculated.
+      const existingSessions = task.sessions || [];
+      const mergedSessions = sessions.map((session, index) => ({
+        ...session,
+        completed: existingSessions[index]?.completed || false,
+      }));
+      const allSessionsComplete =
+        mergedSessions.length > 0 && mergedSessions.every(session => session.completed);
+
+      return { ...task, sessions: mergedSessions, completed: allSessionsComplete };
     });
     
     setTasks(updatedTasks);
@@ -198,7 +242,8 @@ function App() {
               onSelectDate={handleSelectDate}
               onAddTask={handleAddTask}
               onAddMultipleTasks={handleAddMultipleTasks}
-              onToggleComplete={handleToggleComplete}
+              onToggleTaskComplete={handleToggleTaskComplete}
+              onToggleSessionComplete={handleToggleSessionComplete}
               onDeleteTask={handleDeleteTask}
               onHighlightTask={handleHighlightTask}
             />

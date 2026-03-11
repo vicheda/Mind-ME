@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { format, isPast, isToday, isSameDay } from 'date-fns';
 import Button from '../components/Button';
 import Badge from '../components/Badge';
@@ -25,7 +25,8 @@ const TaskList = ({
   onSelectDate,
   onAddTask,
   onAddMultipleTasks,
-  onToggleComplete,
+  onToggleTaskComplete,
+  onToggleSessionComplete,
   onDeleteTask,
   onHighlightTask 
 }) => {
@@ -43,6 +44,13 @@ const TaskList = ({
   const [selectedTasks, setSelectedTasks] = useState(new Set());
   const [selectedProjectForParsed, setSelectedProjectForParsed] = useState(projects[0]?.id || '');
   const [viewMode, setViewMode] = useState('day'); // 'day' or 'all'
+
+  // Keep the middle task panel synced with calendar day selection.
+  useEffect(() => {
+    if (selectedDate) {
+      setViewMode('day');
+    }
+  }, [selectedDate]);
   
   // Filter tasks by active project filter
   const projectFilteredTasks = tasks.filter(task => {
@@ -50,30 +58,33 @@ const TaskList = ({
     return task.projectId === activeFilter;
   });
   
-  // Filter by selected date if in 'day' mode
-  const filteredTasks = viewMode === 'day' 
-    ? projectFilteredTasks.filter(task => {
-        if (task.completed) return false;
-        if (!task.sessions || task.sessions.length === 0) return false;
-        
-        // Check if task has a session on the selected date
-        return task.sessions?.some(session => 
-          isSameDay(new Date(session.date), selectedDate)
-        );
-      })
-    : projectFilteredTasks;
-  
   const upcomingTasks = viewMode === 'all'
-    ? filteredTasks
+    ? projectFilteredTasks
         .filter(t => !t.completed)
         .sort((a, b) => new Date(a.deadline) - new Date(b.deadline))
-    : filteredTasks.sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
-  
+    : projectFilteredTasks
+        .filter(task =>
+          (task.sessions || []).some(
+            session => !session.completed && isSameDay(new Date(session.date), selectedDate)
+          )
+        )
+        .sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
+
   const completedTasks = viewMode === 'all'
-    ? filteredTasks
+    ? projectFilteredTasks
         .filter(t => t.completed)
         .sort((a, b) => new Date(b.deadline) - new Date(a.deadline))
-    : [];
+    : projectFilteredTasks
+        .filter(task => {
+          const hasIncompleteForDay = (task.sessions || []).some(
+            session => !session.completed && isSameDay(new Date(session.date), selectedDate)
+          );
+          const hasCompletedForDay = (task.sessions || []).some(
+            session => session.completed && isSameDay(new Date(session.date), selectedDate)
+          );
+          return !hasIncompleteForDay && hasCompletedForDay;
+        })
+        .sort((a, b) => new Date(a.deadline) - new Date(b.deadline));
   
   const handleAddTask = () => {
     if (formData.title && formData.deadline) {
@@ -206,7 +217,9 @@ const TaskList = ({
                   projectColor={getProjectColor(task.projectId)}
                   selectedDate={selectedDate}
                   viewMode={viewMode}
-                  onToggleComplete={onToggleComplete}
+                  daySessionStatus="incomplete"
+                  onToggleTaskComplete={onToggleTaskComplete}
+                  onToggleSessionComplete={onToggleSessionComplete}
                   onDelete={onDeleteTask}
                   onHighlight={onHighlightTask}
                 />
@@ -226,7 +239,9 @@ const TaskList = ({
                   projectColor={getProjectColor(task.projectId)}
                   selectedDate={selectedDate}
                   viewMode={viewMode}
-                  onToggleComplete={onToggleComplete}
+                  daySessionStatus={viewMode === 'day' ? 'completed' : 'incomplete'}
+                  onToggleTaskComplete={onToggleTaskComplete}
+                  onToggleSessionComplete={onToggleSessionComplete}
                   onDelete={onDeleteTask}
                   onHighlight={onHighlightTask}
                 />
@@ -378,24 +393,47 @@ const TaskList = ({
   );
 };
 
-const TaskItem = ({ task, projectColor, selectedDate, viewMode, onToggleComplete, onDelete, onHighlight }) => {
+const TaskItem = ({ task, projectColor, selectedDate, viewMode, daySessionStatus = 'incomplete', onToggleTaskComplete, onToggleSessionComplete, onDelete, onHighlight }) => {
+  const isTaskComplete =
+    task.completed ||
+    ((task.sessions || []).length > 0 && (task.sessions || []).every(session => session.completed));
+  const isCompletedRow = viewMode === 'day' ? daySessionStatus === 'completed' : isTaskComplete;
   const deadline = new Date(task.deadline);
-  const isOverdue = isPast(deadline) && !isToday(deadline) && !task.completed;
-  const isUrgent = isToday(deadline) && !task.completed;
+  const isOverdue = isPast(deadline) && !isToday(deadline) && !isTaskComplete;
+  const isUrgent = isToday(deadline) && !isTaskComplete;
   
   // Find sessions for selected date if in day mode
   const daySessions = viewMode === 'day' && selectedDate
-    ? task.sessions?.filter(s => isSameDay(new Date(s.date), selectedDate)) || []
+    ? task.sessions?.filter(s => {
+        const sameDay = isSameDay(new Date(s.date), selectedDate);
+        if (!sameDay) return false;
+        return daySessionStatus === 'completed' ? !!s.completed : !s.completed;
+      }) || []
     : [];
   
   return (
-    <div className={`task-item ${task.completed ? 'completed' : ''}`}>
-      <input
-        type="checkbox"
-        checked={task.completed}
-        onChange={() => onToggleComplete(task.id)}
-        className="task-checkbox"
-      />
+    <div className={`task-item ${isCompletedRow ? 'completed' : ''}`}>
+      {viewMode === 'all' ? (
+        <input
+          type="checkbox"
+          checked={isTaskComplete}
+          onChange={() => onToggleTaskComplete(task.id)}
+          className="task-checkbox"
+        />
+      ) : (
+        <input
+          type="checkbox"
+          checked={daySessionStatus === 'completed' && daySessions.length > 0}
+          onChange={() => {
+            if (daySessions.length > 0) {
+              onToggleSessionComplete(task.id, daySessions[0].id);
+            }
+          }}
+          className="task-checkbox"
+          title={daySessions.length > 0 ? 'Toggle one session complete' : 'No session on this day'}
+          disabled={daySessions.length === 0}
+        />
+      )}
       
       <div 
         className="task-color" 
@@ -411,7 +449,9 @@ const TaskItem = ({ task, projectColor, selectedDate, viewMode, onToggleComplete
           <span className="task-hours mono">{task.estimatedHours}h</span>
           {viewMode === 'day' && daySessions.length > 0 && (
             <span className="task-sessions mono">
-              {daySessions.map(s => `${s.hours.toFixed(1)}h`).join(', ')}
+              {daySessions
+                .map(s => `Session ${s.sessionNumber}/${s.totalSessions} · ${s.hours.toFixed(1)}h`)
+                .join(', ')}
             </span>
           )}
           {viewMode === 'all' && task.sessions && task.sessions.length > 0 && (
