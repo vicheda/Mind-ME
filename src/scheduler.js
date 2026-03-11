@@ -49,8 +49,9 @@ export const scheduleTask = (task, existingSessions = []) => {
   }
   
   // Split total hours into sessions of max 2 hours each
-  const totalHours = task.estimatedHours || 2;
-  const numSessions = Math.ceil(totalHours / MAX_SESSION_HOURS);
+  const rawHours = Number(task.estimatedHours);
+  const totalHours = Number.isFinite(rawHours) && rawHours > 0 ? rawHours : 2;
+  const numSessions = Math.max(1, Math.ceil(totalHours / MAX_SESSION_HOURS));
   const hoursPerSession = totalHours / numSessions;
   
   // Distribute sessions evenly across available days
@@ -73,6 +74,23 @@ export const scheduleTask = (task, existingSessions = []) => {
         taskId: task.id,
         sessionNumber: i + 1,
         totalSessions: numSessions,
+        hours: hoursPerSession,
+        date: sessionDate.toISOString(),
+      });
+    }
+  } else if (numSessions === 1) {
+    // Single-session tasks should be placed on a concrete day (latest available day).
+    const dayIndex = availableDays.length - 1;
+    const sessionDate = availableDays[dayIndex];
+
+    if (!sessionDate) {
+      console.error('Invalid dayIndex:', dayIndex, 'availableDays.length:', availableDays.length);
+    } else {
+      sessions.push({
+        id: `${task.id}-session-0`,
+        taskId: task.id,
+        sessionNumber: 1,
+        totalSessions: 1,
         hours: hoursPerSession,
         date: sessionDate.toISOString(),
       });

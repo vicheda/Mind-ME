@@ -8,6 +8,15 @@ import { PRIORITY_LEVELS } from '../models';
 import { parseSyllabusText } from '../parser';
 import './TaskList.css';
 
+const parseLocalDateFromInput = (dateString) => {
+  if (!dateString) return null;
+
+  const [year, month, day] = dateString.split('-').map(Number);
+  if (!year || !month || !day) return null;
+
+  return new Date(year, month - 1, day);
+};
+
 const TaskList = ({ 
   tasks, 
   projects,
@@ -68,9 +77,12 @@ const TaskList = ({
   
   const handleAddTask = () => {
     if (formData.title && formData.deadline) {
+      const localDeadline = parseLocalDateFromInput(formData.deadline);
+      if (!localDeadline) return;
+
       onAddTask({
         ...formData,
-        deadline: new Date(formData.deadline),
+        deadline: localDeadline,
       });
       setFormData({
         title: '',
