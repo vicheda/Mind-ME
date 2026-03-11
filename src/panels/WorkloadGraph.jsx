@@ -1,7 +1,9 @@
 import React, { useState } from 'react';
 import { 
-  startOfDay, 
+  startOfWeek,
   addDays, 
+  addWeeks,
+  subWeeks,
   format,
   isToday 
 } from 'date-fns';
@@ -11,15 +13,30 @@ import './WorkloadGraph.css';
 
 const WorkloadGraph = ({ tasks, projects }) => {
   const [hoveredBar, setHoveredBar] = useState(null);
+  const [currentWeek, setCurrentWeek] = useState(
+    startOfWeek(new Date(), { weekStartsOn: 1 })
+  );
   
-  // Calculate data for next 4 weeks (28 days)
-  const startDate = startOfDay(new Date());
-  const endDate = addDays(startDate, 27);
+  // Calculate data for the selected week (7 days)
+  const startDate = currentWeek;
+  const endDate = addDays(startDate, 6);
   const dailyWorkload = calculateDailyWorkload(tasks, projects, startDate, endDate);
+
+  const handlePrevWeek = () => {
+    setCurrentWeek(subWeeks(currentWeek, 1));
+  };
+
+  const handleNextWeek = () => {
+    setCurrentWeek(addWeeks(currentWeek, 1));
+  };
+
+  const handleThisWeek = () => {
+    setCurrentWeek(startOfWeek(new Date(), { weekStartsOn: 1 }));
+  };
   
   // Generate all days in range
   const days = [];
-  for (let i = 0; i < 28; i++) {
+  for (let i = 0; i < 7; i++) {
     const date = addDays(startDate, i);
     const dateKey = format(date, 'yyyy-MM-dd');
     days.push({
@@ -30,12 +47,25 @@ const WorkloadGraph = ({ tasks, projects }) => {
   }
   
   // Find max value for scaling
-  const maxHours = Math.max(6, ...days.map(d => d.data.total));
+  const maxHours = Math.max(MAX_HOURS_PER_DAY, ...days.map(d => d.data.total));
+  const yAxisTicks = [1, 0.75, 0.5, 0.25, 0].map(ratio =>
+    Math.round(maxHours * ratio)
+  );
   
   return (
     <div className="workload-graph">
       <div className="graph-header">
-        <h2>Workload Distribution</h2>
+        <div className="graph-title-group">
+          <h2>Weekly Workload</h2>
+          <span className="graph-week-label mono">
+            {format(startDate, 'MMM d')} - {format(endDate, 'MMM d, yyyy')}
+          </span>
+        </div>
+        <div className="graph-nav">
+          <button className="graph-nav-btn" onClick={handlePrevWeek}>←</button>
+          <button className="graph-nav-btn" onClick={handleThisWeek}>This Week</button>
+          <button className="graph-nav-btn" onClick={handleNextWeek}>→</button>
+        </div>
         <div className="graph-legend">
           {projects
             .filter(p => p.visible)
@@ -53,10 +83,9 @@ const WorkloadGraph = ({ tasks, projects }) => {
       
       <div className="graph-container">
         <div className="graph-y-axis">
-          <div className="y-label">6h</div>
-          <div className="y-label">4h</div>
-          <div className="y-label">2h</div>
-          <div className="y-label">0h</div>
+          {yAxisTicks.map((tick, index) => (
+            <div key={`${tick}-${index}`} className="y-label">{tick}h</div>
+          ))}
         </div>
         
         <div className="graph-content">
@@ -100,11 +129,9 @@ const WorkloadGraph = ({ tasks, projects }) => {
                     <div className="bar-empty"></div>
                   )}
                   
-                  {index % 4 === 0 && (
-                    <div className="bar-date mono">
-                      {format(day.dateObj, 'MMM d')}
-                    </div>
-                  )}
+                  <div className="bar-date mono">
+                    {format(day.dateObj, 'EEE d')}
+                  </div>
                   
                   {hoveredBar === index && day.data.total > 0 && (
                     <div className="bar-tooltip">

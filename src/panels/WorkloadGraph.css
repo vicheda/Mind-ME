@@ -15,14 +15,46 @@
   gap: 1rem;
 }
 
+.graph-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 0.25rem;
+}
+
 .graph-header h2 {
   font-size: 1.5rem;
+}
+
+.graph-week-label {
+  font-size: 0.8rem;
+  color: var(--text-muted);
+}
+
+.graph-nav {
+  display: flex;
+  gap: 0.5rem;
+}
+
+.graph-nav-btn {
+  border: 1px solid var(--border-color);
+  background: var(--bg-primary);
+  color: var(--text-primary);
+  border-radius: 6px;
+  padding: 0.3rem 0.65rem;
+  cursor: pointer;
+  font-size: 0.8rem;
+  transition: all 0.2s ease;
+}
+
+.graph-nav-btn:hover {
+  border-color: var(--text-muted);
 }
 
 .graph-legend {
   display: flex;
   gap: 1.5rem;
   flex-wrap: wrap;
+  width: 100%;
 }
 
 .legend-item {
